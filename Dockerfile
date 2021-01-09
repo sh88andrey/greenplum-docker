@@ -1,10 +1,14 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
-RUN apt-get update && apt-get install -y openssh-server \
+RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g  /etc/apt/sources.list \
+    && sed -i s@/security.ubuntu.com/@/mirrors.aliyun.com/@g  /etc/apt/sources.list \
+    && apt-get update && apt-get install -y openssh-server \
     && apt-get install -y software-properties-common \
     && add-apt-repository -y ppa:greenplum/db \
-    && apt-get update && apt-get install -y greenplum-db-oss \
+    && apt-get update && apt-get install -y greenplum-db-6 \
     && apt-get install -y less vim sudo
+
+RUN apt-get install -y locales iputils-ping
 
 WORKDIR /inst_scripts
 
@@ -14,13 +18,14 @@ RUN chmod 755 gpadmin_user.sh
 RUN ./gpadmin_user.sh
 RUN usermod -aG sudo gpadmin
 
-RUN chown -R gpadmin:gpadmin /opt/gpdb
+#RUN ln -s /opt/greenplum-db-6-6.13.0 /opt/gpdb
+#RUN chown -R gpadmin:gpadmin /opt/gpdb
 
-# create data directories
-RUN mkdir -p /var/lib/gpdb/data/gpdata1
-RUN mkdir /var/lib/gpdb/data/gpdata2
 # create master directory
-RUN mkdir /var/lib/gpdb/data/gpmaster
+RUN mkdir -p /var/lib/gpdb/data/gpmaster
+# create data directories
+RUN mkdir /var/lib/gpdb/data/gpdata1
+RUN mkdir /var/lib/gpdb/data/gpdata2
 
 
 # set locale
@@ -54,11 +59,17 @@ RUN echo 'gpadmin ALL=(ALL) NOPASSWD:/usr/sbin/sshd' >> /etc/sudoers
 
 USER gpadmin
 
-ENV GPHOME=/opt/gpdb
-ENV PATH=$GPHOME/bin:$PATH
-ENV PYTHONPATH=$GPHOME/lib/python
-ENV LD_LIBRARY_PATH=$GPHOME/lib:$LD_LIBRARY_PATH
-ENV OPENSSL_CONF=$GPHOME/etc/openssl.cnf
+ENV GPHOME=/opt/greenplum-db-6-6.13.0
+ENV PYTHONHOME=${GPHOME}/ext/python
+ENV PATH=${PYTHONHOME}/bin:${PATH}
+ENV LD_LIBRARY_PATH=${PYTHONHOME}/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+ENV PYTHONPATH=${GPHOME}/lib/python
+ENV PATH=${GPHOME}/bin:${PATH}
+ENV LD_LIBRARY_PATH=${GPHOME}/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+ENV OPENSSL_CONF=${GPHOME}/etc/openssl.cnf
+
+
+
 ENV GP_NODE=master
 ENV HOSTFILE=singlehost
 ####CHANGE THIS TO YOUR LOCAL SUBNET

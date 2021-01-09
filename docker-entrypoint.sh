@@ -1,6 +1,8 @@
 #!/bin/bash
 sudo /usr/sbin/sshd
 
+source ${GPHOME}/greenplum_path.sh
+
 m="master"
 if [ "$GP_NODE" == "$m" ]
 
