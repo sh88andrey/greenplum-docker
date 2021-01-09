@@ -1,5 +1,5 @@
 # greenplum-docker
-Docker for greenplum (5.3.0) database.
+Docker for greenplum (6.13.0) database.
 
 ## Build
 docker build -t ubuntu-gpdb .
@@ -31,6 +31,6 @@ Configuration file for setting up the greenplum cluster.
 
 ##Questions?
 
-chad@caoanalytics.com
+sxh615@163.com
 
 
