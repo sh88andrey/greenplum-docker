@@ -31,6 +31,6 @@ Configuration file for setting up the greenplum cluster.
 
 ##Questions?
 
-sxh615@163.com
+chad@caoanalytics.com
 
 
