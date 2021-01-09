@@ -1,6 +1,8 @@
 #!/bin/bash
 sudo /usr/sbin/sshd
 
+sudo chown -R gpadmin:gpadmin /var/lib/gpdb/data
+
 source ${GPHOME}/greenplum_path.sh
 
 m="master"

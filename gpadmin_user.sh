@@ -14,6 +14,8 @@ setup_ssh_for_user() {
   cat "${home_dir}/.ssh/id_rsa.pub" >> "${home_dir}/.ssh/authorized_keys"
   chmod 0600 "${home_dir}/.ssh/authorized_keys"
   cat << 'NOROAMING' >> "${home_dir}/.ssh/config"
+StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
 Host *
   UseRoaming no
 NOROAMING
