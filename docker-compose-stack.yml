@@ -41,9 +41,9 @@ services:
       - db_seg_1:seg1
       - db_seg_2:seg2
     networks:
-      - neusoft
+      - bigont
 
 networks:
-  neusoft:
+  bigont:
     external: true
 
