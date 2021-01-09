@@ -2,7 +2,7 @@
 Docker for greenplum (6.13.0) database.
 
 ## Build
-docker build -t ubuntu-gpdb .
+docker build -t greenplum:6.13.0 .
 
 ## Single Node Docker
 
