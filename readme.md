@@ -17,7 +17,10 @@ From the command line execute the following command: docker-compose up
 
 You can connect to your host using PGADMIN on port 5432 user/pass is gpadmin/dataroad
 
+## Swarm Multi Node Docker-Compose
+From the command line execute the following command: docker stack deploy -c docker-compose-stack.yml greenplum
 
+You can connect to your host using PGADMIN on port 5432 user/pass is gpadmin/dataroad
 
 ### singlehost
 This file contains the name of the hosts to connect to. By default there is one host 'db_master_1'.
