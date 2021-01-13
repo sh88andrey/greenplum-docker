@@ -12,7 +12,7 @@
 # A name for the array you are configuring. You can use any name you 
 # like. Enclose the name in quotes if the name contains spaces.
 
-ARRAY_NAME="DATAROADTECH ARRAY"
+ARRAY_NAME="Greenplum Data Platform"
 
 
 # This specifies the file that contains the list of segment host names 
@@ -33,14 +33,14 @@ MACHINE_LIST_FILE=./hostlist
 # master instance data directory would be named gpsne-1, and the segment 
 # instances would be named gpsne0, gpsne1, gpsne2, gpsne3, and so on.
 
-SEG_PREFIX=gpsne
+SEG_PREFIX=gpseg
 
 
 # Base port number on which primary segment instances will be 
 # started on a segment host. The base port number will be 
 # incremented by one for each segment instance started on a host. 
 
-PORT_BASE=20000
+PORT_BASE=6010
 
 
 # This specifies the data storage location(s) where the script will 
@@ -57,7 +57,7 @@ PORT_BASE=20000
 # may want to create these directories on the segment hosts before running 
 # gpinitsystem and chown them to the appropriate user.
 
-declare -a DATA_DIRECTORY=(/var/lib/gpdb/data/gpdata1 /var/lib/gpdb/data/gpdata2)
+declare -a DATA_DIRECTORY=(/data/segment/primary /data/segment/primary /data/segment/primary)
 
 
 # The OS-configured hostname of the Greenplum Database master instance.
@@ -72,7 +72,7 @@ MASTER_HOSTNAME=$(hostname)
 # create this directory on the master host before running 
 # gpinitsystem and chown it to the appropriate user.
 
-MASTER_DIRECTORY=/var/lib/gpdb/data/gpmaster
+MASTER_DIRECTORY=/data/master
 
 
 # The port number for the master instance. This is the port number 
@@ -107,6 +107,21 @@ CHECK_POINT_SEGMENTS=8
 
 ENCODING=UNICODE
 
+################################################
+#### OPTIONAL MIRROR PARAMETERS
+################################################
+
+#### Base number by which mirror segment port numbers 
+#### are calculated.
+MIRROR_PORT_BASE=7000
+
+#### File system location(s) where mirror segment data directories 
+#### will be created. The number of mirror locations must equal the
+#### number of primary locations as specified in the 
+#### DATA_DIRECTORY parameter.
+declare -a MIRROR_DATA_DIRECTORY=(/data/segment/mirror /data/segment/mirror /data/segment/mirror)
+
+
 
 ################################################
 # OPTIONAL PARAMETERS
@@ -116,4 +131,4 @@ ENCODING=UNICODE
 # system is initialized. You can always create a database later using 
 # the CREATE DATABASE command or the createdb script.
 
-DATABASE_NAME=gpadmin
+DATABASE_NAME=test

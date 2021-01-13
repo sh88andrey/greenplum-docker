@@ -74,7 +74,7 @@ ENV GP_NODE=master
 ENV HOSTFILE=multihost
 ####CHANGE THIS TO YOUR LOCAL SUBNET
 
-VOLUME /var/lib/gpdb/data
+#VOLUME /var/lib/gpdb/data
 ENTRYPOINT ["docker-entrypoint.sh"]
 EXPOSE 5432
 

@@ -9,7 +9,7 @@ services:
     hostname: db_seg_1
     command: tail -f /dev/null
     volumes:
-      - /data/docker-disk/share-data/greenplum:/var/lib/gpdb/data
+      - /data/docker-disk/share-data/greenplum/seg1:/data/
     networks:
       - xdzsoft
   db_seg_2:
@@ -21,7 +21,7 @@ services:
     hostname: db_seg_2
     command: tail -f /dev/null
     volumes:
-      - /data/docker-disk/share-data/greenplum:/var/lib/gpdb/data
+      - /data/docker-disk/share-data/greenplum/seg2:/data
     networks:
       - xdzsoft
   db_master_1:
@@ -34,7 +34,7 @@ services:
     hostname: db_master_1
     command: tail -f /dev/null
     volumes:
-      - /data/docker-disk/share-data/greenplum:/var/lib/gpdb/data
+      - /data/docker-disk/share-data/greenplum/master:/data
     depends_on: 
       - db_seg_1
       - db_seg_2
