@@ -22,11 +22,11 @@ RUN usermod -aG sudo gpadmin
 #RUN chown -R gpadmin:gpadmin /opt/gpdb
 
 # create master directory
-RUN mkdir -p /var/lib/gpdb/data/gpmaster
-RUN mkdir /var/lib/gpdb/data/gpmaster/gpsne-1
+RUN mkdir -p /data/master
+#RUN mkdir /data/master/gpseg-1
 # create data directories
-RUN mkdir /var/lib/gpdb/data/gpdata1
-RUN mkdir /var/lib/gpdb/data/gpdata2
+RUN mkdir -p /data/segment/primary
+RUN mkdir /data/segment/mirror
 
 # set locale
 RUN locale-gen en_US.UTF-8  
@@ -40,11 +40,11 @@ WORKDIR /var/lib/gpdb/setup/
 ADD multihost .
 ADD singlehost .
 ADD gpinitsys .
-RUN chown -R gpadmin:gpadmin /var/lib/gpdb
+RUN chown -R gpadmin:gpadmin /data
 
 
 ENV USER=gpadmin
-ENV MASTER_DATA_DIRECTORY=/var/lib/gpdb/data/gpmaster/gpsne-1
+ENV MASTER_DATA_DIRECTORY=/data/master/gpseg-1
 
 # add the entrypoint script
 ADD docker-entrypoint.sh /usr/local/bin/
@@ -74,7 +74,7 @@ ENV GP_NODE=master
 ENV HOSTFILE=multihost
 ####CHANGE THIS TO YOUR LOCAL SUBNET
 
-#VOLUME /var/lib/gpdb/data
+VOLUME /data
 ENTRYPOINT ["docker-entrypoint.sh"]
 EXPOSE 5432
 
