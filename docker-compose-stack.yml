@@ -11,6 +11,11 @@ services:
       - /data/docker-disk/share-data/greenplum/seg1:/data/
     networks:
       - bigont
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.hostname == segment-ZHENGJIUZHE-REN9000-34IMZ]
+
   db_seg_2:
     image: greenplum:6.13.0
     build: .
@@ -22,12 +27,36 @@ services:
       - /data/docker-disk/share-data/greenplum/seg2:/data
     networks:
       - bigont
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.hostname == segment-ZHENGJIUZHE-REN9000-34IMZ]
+  db_standby_1:
+    image: greenplum:6.13.0
+    build: .
+    environment:
+       - GP_NODE=standby
+    hostname: db_standby_1
+    command: tail -f /dev/null
+    volumes:
+      - /data/docker-disk/share-data/greenplum/standby:/data
+    ports:
+      - "5433:5432"
+    links:
+      - db_seg_1:seg1
+      - db_seg_2:seg2
+    networks:
+      - bigont
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.hostname == segment-ZHENGJIUZHE-REN9000-34IMZ]
   db_master_1:
     image: greenplum:6.13.0
     build: .
     environment:
        - GP_NODE=master
-       - HOSTFILE=multihost
+       - HOSTFILE=hostlist
     hostname: db_master_1
     command: tail -f /dev/null
     volumes:
@@ -35,13 +64,19 @@ services:
     depends_on: 
       - db_seg_1
       - db_seg_2
+      - db_standby_1
     ports:
       - "5432:5432"
     links:
       - db_seg_1:seg1
       - db_seg_2:seg2
+      - db_standby_1:standby
     networks:
       - bigont
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.hostname == segment-ZHENGJIUZHE-REN9000-34IMZ]
 
 networks:
   bigont:

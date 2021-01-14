@@ -24,13 +24,30 @@ services:
       - /data/docker-disk/share-data/greenplum/seg2:/data
     networks:
       - xdzsoft
+  db_standby_1:
+    image: greenplum:6.13.0
+    build: .
+    container_name: db_standby_1
+    environment:
+       - GP_NODE=standby
+    hostname: db_standby_1
+    command: tail -f /dev/null
+    volumes:
+      - /data/docker-disk/share-data/greenplum/standby:/data
+    ports:
+      - "5433:5432"
+    links:
+      - db_seg_1:seg1
+      - db_seg_2:seg2
+    networks:
+      - xdzsoft
   db_master_1:
     image: greenplum:6.13.0
     build: .
     container_name: db_master_1
     environment:
        - GP_NODE=master
-       - HOSTFILE=multihost
+       - HOSTFILE=hostlist
     hostname: db_master_1
     command: tail -f /dev/null
     volumes:
@@ -38,11 +55,13 @@ services:
     depends_on: 
       - db_seg_1
       - db_seg_2
+      - db_standby_1
     ports:
       - "5432:5432"
     links:
       - db_seg_1:seg1
       - db_seg_2:seg2
+      - db_standby_1:standby
     networks:
       - xdzsoft
 

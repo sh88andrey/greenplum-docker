@@ -37,6 +37,7 @@ ENV LC_ALL en_US.UTF-8
 WORKDIR /var/lib/gpdb/setup/
 
 #REPLACE WITH "ADD hostlist ." to specify segment nodes
+ADD hostlist .
 ADD multihost .
 ADD singlehost .
 ADD gpinitsys .
@@ -71,7 +72,7 @@ ENV OPENSSL_CONF=${GPHOME}/etc/openssl.cnf
 
 ENV GP_NODE=master
 #ENV HOSTFILE=singlehost
-ENV HOSTFILE=multihost
+ENV HOSTFILE=multilist
 ####CHANGE THIS TO YOUR LOCAL SUBNET
 
 VOLUME /data
