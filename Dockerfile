@@ -3,12 +3,15 @@ FROM ubuntu:18.04
 RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g  /etc/apt/sources.list \
     && sed -i s@/security.ubuntu.com/@/mirrors.aliyun.com/@g  /etc/apt/sources.list \
     && apt-get update && apt-get install -y openssh-server \
+    && apt-get install -y less vim sudo \
     && apt-get install -y software-properties-common \
-    && add-apt-repository -y ppa:greenplum/db \
-    && apt-get update && apt-get install -y greenplum-db-6 \
-    && apt-get install -y less vim sudo
+    && apt-get install -y locales iputils-ping
 
-RUN apt-get install -y locales iputils-ping
+#RUN add-apt-repository -y ppa:greenplum/db
+#ADD greenplum-ubuntu-db-bionic.list /etc/apt/sources.list.d/
+ADD greenplum-db-6.13.0-ubuntu18.04-amd64.deb /tmp/
+RUN apt-get install -y libapr1 libaprutil1 krb5-multidev libcurl3-gnutls libcurl4 libevent-2.1-6 libyaml-0-2 perl rsync zip net-tools iproute2
+RUN dpkg -i /tmp/greenplum-db-6.13.0-ubuntu18.04-amd64.deb
 
 WORKDIR /inst_scripts
 
