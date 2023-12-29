@@ -1,71 +1,133 @@
-version: "3"
+version: "3.7"
 services:
-  db_seg_1:
-    image: greenplum:6.13.0
+  db2_seg_1:
+    image: greenplum_4_seg:6.13.0
     build: .
-    container_name: db_seg_1
+    container_name: db2_seg_1
     environment:
        - GP_NODE=segment
-    hostname: db_seg_1
+    hostname: db2_seg_1
     command: tail -f /dev/null
     volumes:
-      - /data/docker-disk/share-data/greenplum/seg1:/data/
+      - /data2/docker-disk/share-data/greenplum/seg1:/data/
     networks:
-      - xdzsoft
-  db_seg_2:
-    image: greenplum:6.13.0
+      - gp_net_5
+  db2_seg_2:
+    image: greenplum_4_seg:6.13.0
     build: .
-    container_name: db_seg_2
+    container_name: db2_seg_2
     environment:
        - GP_NODE=segment
-    hostname: db_seg_2
+    hostname: db2_seg_2
     command: tail -f /dev/null
     volumes:
-      - /data/docker-disk/share-data/greenplum/seg2:/data
+      - /data2/docker-disk/share-data/greenplum/seg2:/data
     networks:
-      - xdzsoft
-  db_standby_1:
-    image: greenplum:6.13.0
+      - gp_net_5
+  db2_seg_3:
+    image: greenplum_4_seg:6.13.0
     build: .
-    container_name: db_standby_1
+    container_name: db2_seg_3
+    environment:
+       - GP_NODE=segment
+    hostname: db2_seg_3
+    command: tail -f /dev/null
+    volumes:
+      - /data2/docker-disk/share-data/greenplum/seg3:/data
+    networks:
+      - gp_net_5
+  db2_seg_4:
+    image: greenplum_4_seg:6.13.0
+    build: .
+    container_name: db2_seg_4
+    environment:
+       - GP_NODE=segment
+    hostname: db2_seg_4
+    command: tail -f /dev/null
+    volumes:
+      - /data2/docker-disk/share-data/greenplum/seg4:/data
+    networks:
+      - gp_net_5
+  db2_standby_1:
+    image: greenplum_4_seg:6.13.0
+    build: .
+    container_name: db2_standby_1
     environment:
        - GP_NODE=standby
-    hostname: db_standby_1
+    hostname: db2_standby_1
     command: tail -f /dev/null
     volumes:
-      - /data/docker-disk/share-data/greenplum/standby:/data
+      - /data2/docker-disk/share-data/greenplum/standby:/data
     ports:
-      - "5433:5432"
+      - "45433:5432"
     links:
-      - db_seg_1:seg1
-      - db_seg_2:seg2
+      - db2_seg_1:seg1
+      - db2_seg_2:seg2
+      - db2_seg_3:seg3
+      - db2_seg_4:seg4
     networks:
-      - xdzsoft
-  db_master_1:
-    image: greenplum:6.13.0
+      - gp_net_5
+  db2_master_1:
+    image: greenplum_4_seg:6.13.0
     build: .
-    container_name: db_master_1
+    container_name: db2_master_1
     environment:
        - GP_NODE=master
        - HOSTFILE=hostlist
-    hostname: db_master_1
+    hostname: db2_master_1
     command: tail -f /dev/null
     volumes:
-      - /data/docker-disk/share-data/greenplum/master:/data
+      - /data2/docker-disk/share-data/greenplum/master:/data
     depends_on: 
-      - db_seg_1
-      - db_seg_2
-      - db_standby_1
+      - db2_seg_1
+      - db2_seg_2
+      - db2_seg_3
+      - db2_seg_4
+      - db2_standby_1
     ports:
-      - "5432:5432"
+      - "45432:5432"
     links:
-      - db_seg_1:seg1
-      - db_seg_2:seg2
-      - db_standby_1:standby
+      - db2_seg_1:seg1
+      - db2_seg_2:seg2
+      - db2_seg_3:seg3
+      - db2_seg_4:seg4
+      - db2_standby_1:standby
     networks:
-      - xdzsoft
+      - gp_net_5
+
+  postgres:
+    image: postgres:15.2-alpine
+    ports:
+      - "65432:5432"
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+    volumes:
+      - './postgres_data:/var/lib/postgresql/data'
+
+  postgres2:
+    image: postgres:15.2-alpine
+    ports:
+      - "65433:5432"
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+    volumes:
+      - './postgres_data2:/var/lib/postgresql/data'
+
+#networks:
+#  gp_net_5:
+#    external:
+#      name: gp_net_5
 
 networks:
-  xdzsoft:
-    external: true
+  gp_net_5:
+    driver: bridge
+#    driver_opts:
+#      com.docker.network.bridge.enable_ip_masquerade: "false"
+#      com.docker.network.bridge.name: "gp_net_5"
+#      com.docker.network.driver.mtu: "9000"
+
 

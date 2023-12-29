@@ -22,12 +22,12 @@ then
         sudo cp ./hosts /etc/
         { ssh-keyscan localhost; ssh-keyscan 0.0.0.0; } >> ~/.ssh/known_hosts
         echo "Key exchange complete"
-        yes | gpinitsystem -ac gpinitsys --su_password=dataroad -s db_standby_1
+        yes | gpinitsystem -ac gpinitsys --su_password=dataroad -s db2_standby_1
         echo "Master node initialized"
         # receive connection from anywhere.. This should be changed!!
         echo "host all all 0.0.0.0/0 trust" >>/data/master/gpseg-1/pg_hba.conf
 	# init stand by
-	# yes | gpinitstandby -s db_standby_1
+	# yes | gpinitstandby -s db2_standby_1
         gpstop -u
         # gpstart -a
     else

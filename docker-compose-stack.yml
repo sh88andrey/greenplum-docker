@@ -1,14 +1,14 @@
 version: "3"
 services:
-  db_seg_1:
-    image: greenplum:6.13.0
+  db2_seg_1:
+    image: greenplum_4_seg:6.13.0
     build: .
     environment:
        - GP_NODE=segment
-    hostname: db_seg_1
+    hostname: db2_seg_1
     command: tail -f /dev/null
     volumes:
-      - /data/docker-disk/share-data/greenplum:/data/
+      - /data2/docker-disk/share-data/greenplum:/data/
     networks:
       - greenplum_net
     deploy:
@@ -18,15 +18,15 @@ services:
     sysctls:
       kernel.sem: "500 2048000 200 4096"
 
-  db_seg_2:
-    image: greenplum:6.13.0
+  db2_seg_2:
+    image: greenplum_4_seg:6.13.0
     build: .
     environment:
        - GP_NODE=segment
-    hostname: db_seg_2
+    hostname: db2_seg_2
     command: tail -f /dev/null
     volumes:
-      - /data/docker-disk/share-data/greenplum:/data
+      - /data2/docker-disk/share-data/greenplum:/data
     networks:
       - greenplum_net
     deploy:
@@ -36,46 +36,82 @@ services:
     sysctls:
       kernel.sem: "500 2048000 200 4096"
 
-  db_standby_1:
-    image: greenplum:6.13.0
+  db2_seg_3:
+    image: greenplum_4_seg:6.13.0
+    build: .
+    environment:
+       - GP_NODE=segment
+    hostname: db2_seg_3
+    command: tail -f /dev/null
+    volumes:
+      - /data2/docker-disk/share-data/greenplum:/data
+    networks:
+      - greenplum_net
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.hostname == hadoop2]
+    sysctls:
+      kernel.sem: "500 2048000 200 4096"
+
+  db2_seg_4:
+    image: greenplum_4_seg:6.13.0
+    build: .
+    environment:
+       - GP_NODE=segment
+    hostname: db2_seg_4
+    command: tail -f /dev/null
+    volumes:
+      - /data2/docker-disk/share-data/greenplum:/data
+    networks:
+      - greenplum_net
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.hostname == hadoop2]
+    sysctls:
+      kernel.sem: "500 2048000 200 4096"
+
+  db2_standby_1:
+    image: greenplum_4_seg:6.13.0
     build: .
     environment:
        - GP_NODE=standby
-    hostname: db_standby_1
+    hostname: db2_standby_1
     command: tail -f /dev/null
     volumes:
-      - /data/docker-disk/share-data/greenplum:/data
+      - /data2/docker-disk/share-data/greenplum:/data
     ports:
       - "5433:5432"
     links:
-      - db_seg_1:seg1
-      - db_seg_2:seg2
+      - db2_seg_1:seg1
+      - db2_seg_2:seg2
     networks:
       - greenplum_net
     deploy:
       replicas: 1
       placement:
         constraints: [node.hostname == jiuzhou2]
-  db_master_1:
-    image: greenplum:6.13.0
+  db2_master_1:
+    image: greenplum_4_seg:6.13.0
     build: .
     environment:
        - GP_NODE=master
        - HOSTFILE=hostlist
-    hostname: db_master_1
+    hostname: db2_master_1
     command: tail -f /dev/null
     volumes:
-      - /data/docker-disk/share-data/greenplum:/data
+      - /data2/docker-disk/share-data/greenplum:/data
     depends_on: 
-      - db_seg_1
-      - db_seg_2
-      - db_standby_1
+      - db2_seg_1
+      - db2_seg_2
+      - db2_standby_1
     ports:
       - "5432:5432"
     links:
-      - db_seg_1:seg1
-      - db_seg_2:seg2
-      - db_standby_1:standby
+      - db2_seg_1:seg1
+      - db2_seg_2:seg2
+      - db2_standby_1:standby
     networks:
       - greenplum_net
     deploy:
