@@ -10,9 +10,8 @@ services:
     command: tail -f /dev/null
     volumes:
       - './gp_data/seg1:/data/'
-#      - /data2/docker-disk/share-data/greenplum/seg1:/data/
     networks:
-      - gp_net_15
+      - gp_net_16
   db2_seg_2:
     image: greenplum_4_seg:6.13.0
     build: .
@@ -23,9 +22,8 @@ services:
     command: tail -f /dev/null
     volumes:
       - './gp_data/seg2:/data/'
-#      - /data2/docker-disk/share-data/greenplum/seg2:/data
     networks:
-      - gp_net_15
+      - gp_net_16
   db2_seg_3:
     image: greenplum_4_seg:6.13.0
     build: .
@@ -36,9 +34,8 @@ services:
     command: tail -f /dev/null
     volumes:
       - './gp_data/seg3:/data/'
-#      - /data2/docker-disk/share-data/greenplum/seg3:/data
     networks:
-      - gp_net_15
+      - gp_net_16
   db2_seg_4:
     image: greenplum_4_seg:6.13.0
     build: .
@@ -49,9 +46,8 @@ services:
     command: tail -f /dev/null
     volumes:
       - './gp_data/seg4:/data/'
-#      - /data2/docker-disk/share-data/greenplum/seg4:/data
     networks:
-      - gp_net_15
+      - gp_net_16
   db2_standby_1:
     image: greenplum_4_seg:6.13.0
     build: .
@@ -62,7 +58,6 @@ services:
     command: tail -f /dev/null
     volumes:
       - './gp_data/standby:/data/'
-#      - /data2/docker-disk/share-data/greenplum/standby:/data
     ports:
       - "45433:5432"
     links:
@@ -71,7 +66,7 @@ services:
       - db2_seg_3:seg3
       - db2_seg_4:seg4
     networks:
-      - gp_net_15
+      - gp_net_16
   db2_master_1:
     image: greenplum_4_seg:6.13.0
     build: .
@@ -83,8 +78,7 @@ services:
     command: tail -f /dev/null
     volumes:
       - './gp_data/master:/data/'
-#      - /data2/docker-disk/share-data/greenplum/master:/data
-    depends_on: 
+    depends_on:
       - db2_seg_1
       - db2_seg_2
       - db2_seg_3
@@ -99,7 +93,7 @@ services:
       - db2_seg_4:seg4
       - db2_standby_1:standby
     networks:
-      - gp_net_15
+      - gp_net_16
 
 #  postgres:
 #    image: postgres:15.2-alpine
@@ -112,7 +106,7 @@ services:
 #    volumes:
 #      - './postgres_data:/var/lib/postgresql/data'
 #    networks:
-#      - gp_net_15
+#      - gp_net_16
 
 #  postgres2:
 #    image: postgres:15.2-alpine
@@ -125,7 +119,7 @@ services:
 #    volumes:
 #      - './postgres_data2:/var/lib/postgresql/data'
 #    networks:
-#      - gp_net_15
+#      - gp_net_16
 
   postgres3:
     image: postgres:12.17-alpine
@@ -138,21 +132,21 @@ services:
     volumes:
       - './postgres_data3:/var/lib/postgresql/data'
     networks:
-      - gp_net_15
+      - gp_net_16
 
 
 #networks:
-#  gp_net_15:
+#  gp_net_16:
 #    external:
-#      name: gp_net_15
+#      name: gp_net_16
 
 networks:
-  gp_net_15:
+  gp_net_16:
     driver: bridge
-    name: gp_net_15
+    name: gp_net_16
 #    driver_opts:
 #      com.docker.network.bridge.enable_ip_masquerade: "false"
-#      com.docker.network.bridge.name: "gp_net_15"
+#      com.docker.network.bridge.name: "gp_net_16"
 #      com.docker.network.driver.mtu: "9000"
 
 
